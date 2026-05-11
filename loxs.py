@@ -691,34 +691,49 @@ try:
                     session.mount('http://', adapter)
                     session.mount('https://', adapter)
                     return session
+            
+            SQL_ERRORS = [
+                "you have an error in your sql syntax",
+                "warning: mysql", "unclosed quotation mark",
+                "pg_query()", "sqlite_exception", "ora-01756",
+                "microsoft ole db", "odbc sql server driver",
+            ]
 
             def perform_request(url, payload, cookie):
+                # Baseline dinamico
+                try:
+                    t0 = time.time()
+                    requests.get(url, headers={'User-Agent': get_random_user_agent()}, timeout=10)
+                    baseline = time.time() - t0
+                except:
+                    baseline = 1.0
+
                 url_with_payload = f"{url}{payload}"
                 start_time = time.time()
-                    
-                headers = {
-                    'User-Agent': get_random_user_agent()
-                }
-
+                headers = {'User-Agent': get_random_user_agent()}
                 try:
-                    response = requests.get(url_with_payload, headers=headers, cookies={'cookie': cookie} if cookie else None)
-                    response.raise_for_status()
+                    response = requests.get(url_with_payload, headers=headers,
+                        cookies={'cookie': cookie} if cookie else None, timeout=20, verify=False)
+                    response_time = time.time() - start_time
                     success = True
                     error_message = None
+                    error_based = any(e in response.text.lower() for e in SQL_ERRORS)
                 except requests.exceptions.RequestException as e:
+                    response_time = time.time() - start_time
                     success = False
                     error_message = str(e)
+                    error_based = False
 
-                response_time = time.time() - start_time
-                
-                vulnerability_detected = response_time >= 10
+                time_based = response_time >= (baseline + 8)
+                vulnerability_detected = time_based or error_based
+
                 if vulnerability_detected and scan_state:
                     scan_state['vulnerability_found'] = True
                     scan_state['vulnerable_urls'].append(url_with_payload)
                     scan_state['total_found'] += 1
                 if scan_state:
                     scan_state['total_scanned'] += 1
-                
+
                 return success, url_with_payload, response_time, error_message, vulnerability_detected
 
             def get_file_path(prompt_text):
@@ -1029,7 +1044,7 @@ try:
             logging.disable(logging.CRITICAL)
             
 
-            driver_service = Service(ChromeDriverManager().install())
+            driver_service = Service("/usr/bin/chromedriver")
             return webdriver.Chrome(service=driver_service, options=chrome_options)
 
         def get_driver():
@@ -1052,34 +1067,71 @@ try:
                 for payload_url in payload_urls:
                     try:
                         driver.get(payload_url)
-                        
                         total_scanned[0] += 1
-                        
+
+                        # 1. Detectar alert/confirm/prompt
                         try:
-                            alert = WebDriverWait(driver, timeout).until(EC.alert_is_present())
+                            WebDriverWait(driver, timeout).until(EC.alert_is_present())
+                            alert = driver.switch_to.alert
                             alert_text = alert.text
-
-                            if alert_text:
-                                result = Fore.GREEN + f"[✓]{Fore.CYAN} Vulnerable:{Fore.GREEN} {payload_url} {Fore.CYAN} - Alert Text: {alert_text}"
-                                print(result)
-                                vulnerable_urls.append(payload_url)
-                                if scan_state:
-                                    scan_state['vulnerability_found'] = True
-                                    scan_state['vulnerable_urls'].append(payload_url)
-                                    scan_state['total_found'] += 1
-                                alert.accept()
-                            else:
-                                result = Fore.RED + f"[✗]{Fore.CYAN} Not Vulnerable:{Fore.RED} {payload_url}"
-                                print(result)
-
+                            print(Fore.GREEN + f"[✓]{Fore.CYAN} Vulnerable (dialog):{Fore.GREEN} {payload_url}{Fore.CYAN} - Text: {alert_text}")
+                            vulnerable_urls.append(payload_url)
+                            if scan_state:
+                                scan_state['vulnerability_found'] = True
+                                scan_state['vulnerable_urls'].append(payload_url)
+                                scan_state['total_found'] += 1
+                            alert.accept()
+                            continue
                         except TimeoutException:
+                            pass
+
+                        # 2. Simular interaccion para onfocus/onmouseover/onerror
+                        try:
+                            from selenium.webdriver import ActionChains
+                            elements = driver.find_elements(By.CSS_SELECTOR,
+                                "[onfocus],[onmouseover],[onerror],[autofocus]")
+                            for el in elements:
+                                try:
+                                    ActionChains(driver).move_to_element(el).click().perform()
+                                except:
+                                    pass
+                            has_timeout = 'settimeout' in payload.lower() or 'setinterval' in payload.lower()
+                            extra_wait = 6 if has_timeout else 1
+                            WebDriverWait(driver, timeout + extra_wait).until(EC.alert_is_present())
+                            alert = driver.switch_to.alert
+                            print(Fore.GREEN + f"[✓]{Fore.CYAN} Vulnerable (interaction):{Fore.GREEN} {payload_url}")
+                            vulnerable_urls.append(payload_url)
+                            if scan_state:
+                                scan_state['vulnerability_found'] = True
+                                scan_state['vulnerable_urls'].append(payload_url)
+                                scan_state['total_found'] += 1
+                            alert.accept()
+                            continue
+                        except (TimeoutException, Exception):
+                            pass
+
+                        # 3. Verificar reflection en DOM
+                        try:
+                            page_source = driver.page_source
+                            if payload[:20] in page_source:
+                                print(Fore.YELLOW + f"[~]{Fore.CYAN} Reflected (no ejecuto):{Fore.YELLOW} {payload_url}")
+                            else:
+                                print(Fore.RED + f"[✗]{Fore.CYAN} Not Vulnerable:{Fore.RED} {payload_url}")
+                        except:
                             print(Fore.RED + f"[✗]{Fore.CYAN} Not Vulnerable:{Fore.RED} {payload_url}")
 
                     except UnexpectedAlertPresentException:
-                        pass
+                        try:
+                            driver.switch_to.alert.accept()
+                            vulnerable_urls.append(payload_url)
+                            if scan_state:
+                                scan_state['vulnerability_found'] = True
+                                scan_state['vulnerable_urls'].append(payload_url)
+                                scan_state['total_found'] += 1
+                        except:
+                            pass
             finally:
                 return_driver(driver)
-
 
 
         def run_scan(urls, payload_file, timeout, scan_state):
