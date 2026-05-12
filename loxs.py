@@ -160,11 +160,11 @@ try:
                           \_/                 
     """
         print(Color.ORANGE + Style.BRIGHT + title.center(72))
-        print(Fore.WHITE + Style.BRIGHT + "─" * 72)
+        print(Fore.WHITE + Style.BRIGHT + "â”€" * 72)
         border_color = Color.CYAN + Style.BRIGHT
         option_color = Fore.WHITE + Style.BRIGHT  
         
-        print(border_color + "┌" + "─" * 72 + "┐")
+        print(border_color + "â”Œ" + "â”€" * 72 + "â”")
         
         options = [
             "1] LFi Scanner",
@@ -177,17 +177,17 @@ try:
         ]
         
         for option in options:
-            print(border_color + "│" + option_color + option.ljust(72) + border_color + "│")
+            print(border_color + "â”‚" + option_color + option.ljust(72) + border_color + "â”‚")
         
-        print(border_color + "└" + "─" * 72 + "┘")
+        print(border_color + "â””" + "â”€" * 72 + "â”˜")
         authors = "Created by: Coffinxp, 1hehaq, HexSh1dow, Naho, AnonKryptiQuz, Hghost010"
         instructions = "Select an option by entering the corresponding number:"
         
-        print(Fore.WHITE + Style.BRIGHT + "─" * 72)
+        print(Fore.WHITE + Style.BRIGHT + "â”€" * 72)
         print(Fore.WHITE + Style.BRIGHT + authors.center(72))
-        print(Fore.WHITE + Style.BRIGHT + "─" * 72)
+        print(Fore.WHITE + Style.BRIGHT + "â”€" * 72)
         print(Fore.WHITE + Style.BRIGHT + instructions.center(72))
-        print(Fore.WHITE + Style.BRIGHT + "─" * 72)
+        print(Fore.WHITE + Style.BRIGHT + "â”€" * 72)
 
     def print_exit_menu():
         clear_screen()
@@ -663,10 +663,10 @@ try:
         try:
             with open(absolute_path, 'w', encoding='utf-8') as f:
                 f.write(html_content)
-            print(f"{Fore.GREEN}[✓] HTML report saved as {absolute_path}")
+            print(f"{Fore.GREEN}[âœ“] HTML report saved as {absolute_path}")
             return absolute_path
         except Exception as e:
-            print(f"{Fore.RED}[✗] Failed to save HTML report: {e}")
+            print(f"{Fore.RED}[âœ—] Failed to save HTML report: {e}")
             return None
     
             
@@ -678,7 +678,7 @@ try:
             def get_random_user_agent():
                 return random.choice(USER_AGENTS)
                 
-            def get_retry_session(retries=3, backoff_factor=0.3, status_forcelist=(500, 502, 504)):
+            def get_retry_session(retries=2, backoff_factor=0.1, status_forcelist=(502, 504)):
                     session = requests.Session()
                     retry = Retry(
                     total=retries,
@@ -724,7 +724,10 @@ try:
                     error_message = str(e)
                     error_based = False
 
-                time_based = response_time >= (baseline + 8)
+                if success and hasattr(response, 'status_code') and response.status_code in [200, 301, 302]:
+                    time_based = response_time >= (baseline + 8)
+                else:
+                    time_based = False
                 vulnerability_detected = time_based or error_based
 
                 if vulnerability_detected and scan_state:
@@ -798,20 +801,20 @@ try:
 
             def print_scan_summary(total_found, total_scanned, start_time):
                 summary = [
-                    "→ Scanning finished.",
-                    f"• Total found: {Fore.GREEN}{total_found}{Fore.YELLOW}",
-                    f"• Total scanned: {total_scanned}",
-                    f"• Time taken: {int(time.time() - start_time)} seconds"
+                    "â†’ Scanning finished.",
+                    f"â€¢ Total found: {Fore.GREEN}{total_found}{Fore.YELLOW}",
+                    f"â€¢ Total scanned: {total_scanned}",
+                    f"â€¢ Time taken: {int(time.time() - start_time)} seconds"
                 ]
                 max_length = max(len(line.replace(Fore.GREEN, '').replace(Fore.YELLOW, '')) for line in summary)
-                border = "┌" + "─" * (max_length + 2) + "┐"
-                bottom_border = "└" + "─" * (max_length + 2) + "┘"
+                border = "â”Œ" + "â”€" * (max_length + 2) + "â”"
+                bottom_border = "â””" + "â”€" * (max_length + 2) + "â”˜"
                 
                 print(Fore.YELLOW + f"\n{border}")
                 for line in summary:
                     padded_line = line.replace(Fore.GREEN, '').replace(Fore.YELLOW, '')
                     padding = max_length - len(padded_line)
-                    print(Fore.YELLOW + f"│ {line}{' ' * padding} │{Fore.YELLOW}")
+                    print(Fore.YELLOW + f"â”‚ {line}{' ' * padding} â”‚{Fore.YELLOW}")
                 print(Fore.YELLOW + bottom_border)
 
             def main():
@@ -854,11 +857,11 @@ try:
                 try:
                     if threads == 0:
                         for url in urls:
-                            box_content = f" → Scanning URL: {url} "
+                            box_content = f" â†’ Scanning URL: {url} "
                             box_width = max(len(box_content) + 2, 40)
-                            print(Fore.YELLOW + "\n┌" + "─" * (box_width - 2) + "┐")
-                            print(Fore.YELLOW + f"│{box_content.center(box_width - 2)}│")
-                            print(Fore.YELLOW + "└" + "─" * (box_width - 2) + "┘\n")
+                            print(Fore.YELLOW + "\nâ”Œ" + "â”€" * (box_width - 2) + "â”")
+                            print(Fore.YELLOW + f"â”‚{box_content.center(box_width - 2)}â”‚")
+                            print(Fore.YELLOW + "â””" + "â”€" * (box_width - 2) + "â”˜\n")
                             for payload in payloads:
                                 success, url_with_payload, response_time, error_message, vulnerability_detected = perform_request(url, payload, cookie)
 
@@ -867,7 +870,7 @@ try:
                                     encoded_stripped_payload = quote(stripped_payload, safe='')
                                     encoded_url = f"{url}{encoded_stripped_payload}"
                                     if single_url_scan:
-                                        print(f"{Fore.YELLOW}[→] Scanning with payload: {stripped_payload}")
+                                        print(f"{Fore.YELLOW}[â†’] Scanning with payload: {stripped_payload}")
                                         encoded_url_with_payload = encoded_url
                                     else:
                                         list_stripped_payload = url_with_payload
@@ -877,8 +880,8 @@ try:
 
                                         encoded_url_with_payload = url_with_payload.replace(list_stripped_payload, encoded_stripped_payload)
 
-                                        print(f"{Fore.YELLOW}[→] Scanning with payload: {list_stripped_payload}")
-                                    print(f"{Fore.GREEN}[✓]{Fore.CYAN} Vulnerable: {Fore.GREEN}{encoded_url_with_payload}{Fore.CYAN} - Response Time: {response_time:.2f} seconds")
+                                        print(f"{Fore.YELLOW}[â†’] Scanning with payload: {list_stripped_payload}")
+                                    print(f"{Fore.GREEN}[âœ“]{Fore.CYAN} Vulnerable: {Fore.GREEN}{encoded_url_with_payload}{Fore.CYAN} - Response Time: {response_time:.2f} seconds")
                                     vulnerable_urls.append(url_with_payload)
                                     total_found += 1
                                     
@@ -887,7 +890,7 @@ try:
                                     encoded_stripped_payload = quote(stripped_payload, safe='')
                                     encoded_url = f"{url}{encoded_stripped_payload}"
                                     if single_url_scan:
-                                        print(f"{Fore.YELLOW}[→] Scanning with payload: {stripped_payload}")
+                                        print(f"{Fore.YELLOW}[â†’] Scanning with payload: {stripped_payload}")
                                         encoded_url_with_payload = encoded_url
                                     else:
                                         list_stripped_payload = url_with_payload
@@ -897,18 +900,18 @@ try:
 
                                         encoded_url_with_payload = url_with_payload.replace(list_stripped_payload, encoded_stripped_payload)
 
-                                        print(f"{Fore.YELLOW}[→] Scanning with payload: {list_stripped_payload}")
-                                    print(f"{Fore.RED}[✗]{Fore.CYAN} Not Vulnerable: {Fore.RED}{encoded_url_with_payload}{Fore.CYAN} - Response Time: {response_time:.2f} seconds")
+                                        print(f"{Fore.YELLOW}[â†’] Scanning with payload: {list_stripped_payload}")
+                                    print(f"{Fore.RED}[âœ—]{Fore.CYAN} Not Vulnerable: {Fore.RED}{encoded_url_with_payload}{Fore.CYAN} - Response Time: {response_time:.2f} seconds")
                                 total_scanned += 1
                                 
                     else:
                         with concurrent.futures.ThreadPoolExecutor(max_workers=threads) as executor:
                             for url in urls:
-                                box_content = f" → Scanning URL: {url} "
+                                box_content = f" â†’ Scanning URL: {url} "
                                 box_width = max(len(box_content) + 2, 40)
-                                print(Fore.YELLOW + "\n┌" + "─" * (box_width - 2) + "┐")
-                                print(Fore.YELLOW + f"│{box_content.center(box_width - 2)}│")
-                                print(Fore.YELLOW + "└" + "─" * (box_width - 2) + "┘\n")
+                                print(Fore.YELLOW + "\nâ”Œ" + "â”€" * (box_width - 2) + "â”")
+                                print(Fore.YELLOW + f"â”‚{box_content.center(box_width - 2)}â”‚")
+                                print(Fore.YELLOW + "â””" + "â”€" * (box_width - 2) + "â”˜\n")
                                 
                                 futures = []
                                 for payload in payloads:
@@ -922,7 +925,7 @@ try:
                                         encoded_stripped_payload = quote(stripped_payload, safe='')
                                         encoded_url = f"{url}{encoded_stripped_payload}"
                                         if single_url_scan:
-                                            print(f"{Fore.YELLOW}[→] Scanning with payload: {stripped_payload}")
+                                            print(f"{Fore.YELLOW}[â†’] Scanning with payload: {stripped_payload}")
                                             encoded_url_with_payload = encoded_url
                                         else:
                                             list_stripped_payload = url_with_payload
@@ -932,8 +935,8 @@ try:
 
                                             encoded_url_with_payload = url_with_payload.replace(list_stripped_payload, encoded_stripped_payload)
 
-                                            print(f"{Fore.YELLOW}[→] Scanning with payload: {list_stripped_payload}")
-                                        print(f"{Fore.GREEN}[✓]{Fore.CYAN} Vulnerable: {Fore.GREEN}{encoded_url_with_payload}{Fore.CYAN} - Response Time: {response_time:.2f} seconds")
+                                            print(f"{Fore.YELLOW}[â†’] Scanning with payload: {list_stripped_payload}")
+                                        print(f"{Fore.GREEN}[âœ“]{Fore.CYAN} Vulnerable: {Fore.GREEN}{encoded_url_with_payload}{Fore.CYAN} - Response Time: {response_time:.2f} seconds")
                                         vulnerable_urls.append(url_with_payload)
                                         total_found += 1
                                         if single_url_scan and first_vulnerability_prompt:
@@ -947,7 +950,7 @@ try:
                                         encoded_stripped_payload = quote(stripped_payload, safe='')
                                         encoded_url = f"{url}{encoded_stripped_payload}"
                                         if single_url_scan:
-                                            print(f"{Fore.YELLOW}[→] Scanning with payload: {stripped_payload}")
+                                            print(f"{Fore.YELLOW}[â†’] Scanning with payload: {stripped_payload}")
                                             encoded_url_with_payload = encoded_url
                                         else:
                                             list_stripped_payload = url_with_payload
@@ -957,8 +960,8 @@ try:
 
                                             encoded_url_with_payload = url_with_payload.replace(list_stripped_payload, encoded_stripped_payload)
 
-                                            print(f"{Fore.YELLOW}[→] Scanning with payload: {list_stripped_payload}")
-                                        print(f"{Fore.RED}[✗]{Fore.CYAN} Not Vulnerable: {Fore.RED}{encoded_url_with_payload}{Fore.CYAN} - Response Time: {response_time:.2f} seconds")
+                                            print(f"{Fore.YELLOW}[â†’] Scanning with payload: {list_stripped_payload}")
+                                        print(f"{Fore.RED}[âœ—]{Fore.CYAN} Not Vulnerable: {Fore.RED}{encoded_url_with_payload}{Fore.CYAN} - Response Time: {response_time:.2f} seconds")
                                     total_scanned += 1
 
                     print_scan_summary(total_found, total_scanned, start_time)
@@ -1074,7 +1077,7 @@ try:
                             WebDriverWait(driver, timeout).until(EC.alert_is_present())
                             alert = driver.switch_to.alert
                             alert_text = alert.text
-                            print(Fore.GREEN + f"[✓]{Fore.CYAN} Vulnerable (dialog):{Fore.GREEN} {payload_url}{Fore.CYAN} - Text: {alert_text}")
+                            print(Fore.GREEN + f"[âœ“]{Fore.CYAN} Vulnerable (dialog):{Fore.GREEN} {payload_url}{Fore.CYAN} - Text: {alert_text}")
                             vulnerable_urls.append(payload_url)
                             if scan_state:
                                 scan_state['vulnerability_found'] = True
@@ -1099,7 +1102,7 @@ try:
                             extra_wait = 6 if has_timeout else 1
                             WebDriverWait(driver, timeout + extra_wait).until(EC.alert_is_present())
                             alert = driver.switch_to.alert
-                            print(Fore.GREEN + f"[✓]{Fore.CYAN} Vulnerable (interaction):{Fore.GREEN} {payload_url}")
+                            print(Fore.GREEN + f"[âœ“]{Fore.CYAN} Vulnerable (interaction):{Fore.GREEN} {payload_url}")
                             vulnerable_urls.append(payload_url)
                             if scan_state:
                                 scan_state['vulnerability_found'] = True
@@ -1116,9 +1119,9 @@ try:
                             if payload[:20] in page_source:
                                 print(Fore.YELLOW + f"[~]{Fore.CYAN} Reflected (no ejecuto):{Fore.YELLOW} {payload_url}")
                             else:
-                                print(Fore.RED + f"[✗]{Fore.CYAN} Not Vulnerable:{Fore.RED} {payload_url}")
+                                print(Fore.RED + f"[âœ—]{Fore.CYAN} Not Vulnerable:{Fore.RED} {payload_url}")
                         except:
-                            print(Fore.RED + f"[✗]{Fore.CYAN} Not Vulnerable:{Fore.RED} {payload_url}")
+                            print(Fore.RED + f"[âœ—]{Fore.CYAN} Not Vulnerable:{Fore.RED} {payload_url}")
 
                     except UnexpectedAlertPresentException:
                         try:
@@ -1174,10 +1177,10 @@ try:
 
         def print_scan_summary(total_found, total_scanned, start_time):
             summary = [
-                "→ Scanning finished.",
-                f"• Total found: {Fore.GREEN}{total_found}{Fore.YELLOW}",
-                f"• Total scanned: {total_scanned}",
-                f"• Time taken: {int(time.time() - start_time)} seconds"
+                "â†’ Scanning finished.",
+                f"â€¢ Total found: {Fore.GREEN}{total_found}{Fore.YELLOW}",
+                f"â€¢ Total scanned: {total_scanned}",
+                f"â€¢ Time taken: {int(time.time() - start_time)} seconds"
             ]
             for line in summary:
                 print(Fore.YELLOW + line)
@@ -1280,11 +1283,11 @@ try:
 
             try:
                 for url in urls:
-                    box_content = f" → Scanning URL: {url} "
+                    box_content = f" â†’ Scanning URL: {url} "
                     box_width = max(len(box_content) + 2, 40)
-                    print(Fore.YELLOW + "\n┌" + "─" * (box_width - 2) + "┐")
-                    print(Fore.YELLOW + f"│{box_content.center(box_width - 2)}│")
-                    print(Fore.YELLOW + "└" + "─" * (box_width - 2) + "┘\n")
+                    print(Fore.YELLOW + "\nâ”Œ" + "â”€" * (box_width - 2) + "â”")
+                    print(Fore.YELLOW + f"â”‚{box_content.center(box_width - 2)}â”‚")
+                    print(Fore.YELLOW + "â””" + "â”€" * (box_width - 2) + "â”˜\n")
 
                     vulnerable_urls, scanned = run_scan([url], payload_file, timeout, scan_state)
                     all_vulnerable_urls.extend(vulnerable_urls)
@@ -1338,7 +1341,7 @@ try:
             chrome_options.page_load_strategy = 'eager'
             logging.disable(logging.CRITICAL)
 
-            service = Service(ChromeDriverManager().install())
+            service = Service("/usr/bin/chromedriver")
             driver = webdriver.Chrome(service=service, options=chrome_options)
             driver.set_page_load_timeout(15)
             drivers.append(driver)
@@ -1355,7 +1358,7 @@ try:
                 if not driver:
                     return False
                     
-                print(Fore.YELLOW + f"[→] Testing {param_name if param_name else 'path'}: {Fore.CYAN}{url}")
+                print(Fore.YELLOW + f"[â†’] Testing {param_name if param_name else 'path'}: {Fore.CYAN}{url}")
                 
                 driver.get(url)
                 WebDriverWait(driver, 10).until(
@@ -1370,12 +1373,12 @@ try:
                             scan_state['vulnerability_found'] = True
                             scan_state['vulnerable_urls'].append(url)
                             scan_state['total_found'] += 1
-                        print(Fore.GREEN + f"[✓] Vulnerable: {url}")
+                        print(Fore.GREEN + f"[âœ“] Vulnerable: {url}")
                         return True
                     else:
-                        print(Fore.RED + f"[✗] Not Vulnerable: {url}")
+                        print(Fore.RED + f"[âœ—] Not Vulnerable: {url}")
                 else:
-                    print(Fore.RED + f"[✗] Not Vulnerable: {url}")
+                    print(Fore.RED + f"[âœ—] Not Vulnerable: {url}")
                 
             except Exception as e:
                 if scan_active:
@@ -1602,20 +1605,20 @@ try:
 
         def print_scan_summary(total_found, total_scanned, start_time):
             summary = [
-                "→ Scanning finished.",
-                f"• Total found: {Fore.GREEN}{total_found}{Fore.YELLOW}",
-                f"• Total scanned: {total_scanned}",
-                f"• Time taken: {int(time.time() - start_time)} seconds"
+                "â†’ Scanning finished.",
+                f"â€¢ Total found: {Fore.GREEN}{total_found}{Fore.YELLOW}",
+                f"â€¢ Total scanned: {total_scanned}",
+                f"â€¢ Time taken: {int(time.time() - start_time)} seconds"
             ]
             max_length = max(len(line.replace(Fore.GREEN, '').replace(Fore.YELLOW, '')) for line in summary)
-            border = "┌" + "─" * (max_length + 2) + "┐"
-            bottom_border = "└" + "─" * (max_length + 2) + "┘"
+            border = "â”Œ" + "â”€" * (max_length + 2) + "â”"
+            bottom_border = "â””" + "â”€" * (max_length + 2) + "â”˜"
 
             print(Fore.YELLOW + f"\n{border}")
             for line in summary:
                 padded_line = line.replace(Fore.GREEN, '').replace(Fore.YELLOW, '')
                 padding = max_length - len(padded_line)
-                print(Fore.YELLOW + f"│ {line}{' ' * padding} │{Fore.YELLOW}")
+                print(Fore.YELLOW + f"â”‚ {line}{' ' * padding} â”‚{Fore.YELLOW}")
             print(Fore.YELLOW + bottom_border)
 
         def save_results(vulnerable_urls, total_found, total_scanned, start_time):
@@ -1632,7 +1635,7 @@ try:
                             filename = f"open_redirect_report_{int(time.time())}.html"
                         report_file = save_html_report(html_content, filename)
                         if report_file:
-                            print(Fore.GREEN + f"[✓] Report saved to: {report_file}")
+                            print(Fore.GREEN + f"[âœ“] Report saved to: {report_file}")
                 except:
                     pass
             elif total_scanned > 0:
@@ -1689,11 +1692,11 @@ try:
                         'total_scanned': 0
                     }
                     
-                    box_content = f" → Scanning URL: {url} "
+                    box_content = f" â†’ Scanning URL: {url} "
                     box_width = max(len(box_content) + 2, 40)
-                    print(Fore.YELLOW + "\n┌" + "─" * (box_width - 2) + "┐")
-                    print(Fore.YELLOW + f"│{box_content.center(box_width - 2)}│")
-                    print(Fore.YELLOW + "└" + "─" * (box_width - 2) + "┘\n\n")
+                    print(Fore.YELLOW + "\nâ”Œ" + "â”€" * (box_width - 2) + "â”")
+                    print(Fore.YELLOW + f"â”‚{box_content.center(box_width - 2)}â”‚")
+                    print(Fore.YELLOW + "â””" + "â”€" * (box_width - 2) + "â”˜\n\n")
                     
                     found, urls_with_payloads = test_open_redirect(url, payloads, max_threads)
                     total_found += found
@@ -1782,11 +1785,11 @@ try:
                     if response.status_code == 200:
                         is_vulnerable = any(re.search(pattern, response.text) for pattern in success_criteria)
                         if is_vulnerable:
-                            result = Fore.GREEN + f"[✓]{Fore.CYAN} Vulnerable: {Fore.GREEN} {target_url} {Fore.CYAN} - Response Time: {response_time} seconds"
+                            result = Fore.GREEN + f"[âœ“]{Fore.CYAN} Vulnerable: {Fore.GREEN} {target_url} {Fore.CYAN} - Response Time: {response_time} seconds"
                         else:
-                            result = Fore.RED + f"[✗]{Fore.CYAN} Not Vulnerable: {Fore.RED} {target_url} {Fore.CYAN} - Response Time: {response_time} seconds"
+                            result = Fore.RED + f"[âœ—]{Fore.CYAN} Not Vulnerable: {Fore.RED} {target_url} {Fore.CYAN} - Response Time: {response_time} seconds"
                     else:
-                        result = Fore.RED + f"[✗]{Fore.CYAN} Not Vulnerable: {Fore.RED} {target_url} {Fore.CYAN} - Response Time: {response_time} seconds"
+                        result = Fore.RED + f"[âœ—]{Fore.CYAN} Not Vulnerable: {Fore.RED} {target_url} {Fore.CYAN} - Response Time: {response_time} seconds"
 
                     if is_vulnerable and scan_state:
                         scan_state['vulnerability_found'] = True
@@ -1809,7 +1812,7 @@ try:
                     try:
                         result, is_vulnerable = future.result()
                         if result:
-                            print(Fore.YELLOW + f"[→] Scanning with payload: {payload.strip()}")
+                            print(Fore.YELLOW + f"[â†’] Scanning with payload: {payload.strip()}")
                             print(result)
                             if is_vulnerable:
                                 found_vulnerabilities += 1
@@ -1867,20 +1870,20 @@ try:
                     
         def print_scan_summary(total_found, total_scanned, start_time):
             summary = [
-                "→ Scanning finished.",
-                f"• Total found: {Fore.GREEN}{total_found}{Fore.YELLOW}",
-                f"• Total scanned: {total_scanned}",
-                f"• Time taken: {int(time.time() - start_time)} seconds"
+                "â†’ Scanning finished.",
+                f"â€¢ Total found: {Fore.GREEN}{total_found}{Fore.YELLOW}",
+                f"â€¢ Total scanned: {total_scanned}",
+                f"â€¢ Time taken: {int(time.time() - start_time)} seconds"
             ]
             max_length = max(len(line.replace(Fore.GREEN, '').replace(Fore.YELLOW, '')) for line in summary)
-            border = "┌" + "─" * (max_length + 2) + "┐"
-            bottom_border = "└" + "─" * (max_length + 2) + "┘"
+            border = "â”Œ" + "â”€" * (max_length + 2) + "â”"
+            bottom_border = "â””" + "â”€" * (max_length + 2) + "â”˜"
             
             print(Fore.YELLOW + f"\n{border}")
             for line in summary:
                 padded_line = line.replace(Fore.GREEN, '').replace(Fore.YELLOW, '')
                 padding = max_length - len(padded_line)
-                print(Fore.YELLOW + f"│ {line}{' ' * padding} │{Fore.YELLOW}")
+                print(Fore.YELLOW + f"â”‚ {line}{' ' * padding} â”‚{Fore.YELLOW}")
             print(Fore.YELLOW + bottom_border)
 
 
@@ -1948,11 +1951,11 @@ try:
 
         if payloads:
             for url in urls:
-                box_content = f" → Scanning URL: {url} "
+                box_content = f" â†’ Scanning URL: {url} "
                 box_width = max(len(box_content) + 2, 40)
-                print(Fore.YELLOW + "\n┌" + "─" * (box_width - 2) + "┐")
-                print(Fore.YELLOW + f"│{box_content.center(box_width - 2)}│")
-                print(Fore.YELLOW + "└" + "─" * (box_width - 2) + "┘\n")
+                print(Fore.YELLOW + "\nâ”Œ" + "â”€" * (box_width - 2) + "â”")
+                print(Fore.YELLOW + f"â”‚{box_content.center(box_width - 2)}â”‚")
+                print(Fore.YELLOW + "â””" + "â”€" * (box_width - 2) + "â”˜\n")
                 found, urls_with_payloads = test_lfi(url, payloads, success_criteria, max_threads)
                 total_found += found
                 total_scanned += len(payloads)
@@ -2074,12 +2077,12 @@ try:
 
                 if response.status_code in [200, 201, 202, 204, 205, 206, 207, 301, 302, 307, 308]:
                     if is_vulnerable:
-                        result = (Fore.GREEN + f"[✓] {Fore.CYAN}Vulnerable: {Fore.GREEN} {target_url} "
+                        result = (Fore.GREEN + f"[âœ“] {Fore.CYAN}Vulnerable: {Fore.GREEN} {target_url} "
                                 f"{Fore.CYAN} - Response Time: {response_time:.2f} seconds")
                         if vulnerability_details:
-                            result += "\n    {}↪ ".format(Fore.YELLOW) + "\n    {}↪ ".format(Fore.YELLOW).join(vulnerability_details)
+                            result += "\n    {}â†ª ".format(Fore.YELLOW) + "\n    {}â†ª ".format(Fore.YELLOW).join(vulnerability_details)
                     else:
-                        result = (Fore.RED + f"[✗] {Fore.CYAN}Not Vulnerable: {Fore.RED} {target_url} "
+                        result = (Fore.RED + f"[âœ—] {Fore.CYAN}Not Vulnerable: {Fore.RED} {target_url} "
                                 f"{Fore.CYAN} - Response Time: {response_time:.2f} seconds")
 
                 if scan_state:
@@ -2108,7 +2111,7 @@ try:
                     try:
                         result, is_vulnerable = future.result()
                         if result:
-                            print(Fore.YELLOW + f"[→] Scanning with payload: {payload}")
+                            print(Fore.YELLOW + f"[â†’] Scanning with payload: {payload}")
                             print(result)
                             if is_vulnerable:
                                 found_vulnerabilities += 1
@@ -2119,20 +2122,20 @@ try:
 
         def print_scan_summary(total_found, total_scanned, start_time):
             summary = [
-                "→ Scanning finished.",
-                f"• Total found: {Fore.GREEN}{total_found}{Fore.YELLOW}",
-                f"• Total scanned: {total_scanned}",
-                f"• Time taken: {int(time.time() - start_time)} seconds"
+                "â†’ Scanning finished.",
+                f"â€¢ Total found: {Fore.GREEN}{total_found}{Fore.YELLOW}",
+                f"â€¢ Total scanned: {total_scanned}",
+                f"â€¢ Time taken: {int(time.time() - start_time)} seconds"
             ]
             max_length = max(len(line.replace(Fore.GREEN, '').replace(Fore.YELLOW, '')) for line in summary)
-            border = "┌" + "─" * (max_length + 2) + "┐"
-            bottom_border = "└" + "─" * (max_length + 2) + "┘"
+            border = "â”Œ" + "â”€" * (max_length + 2) + "â”"
+            bottom_border = "â””" + "â”€" * (max_length + 2) + "â”˜"
             
             print(Fore.YELLOW + f"\n{border}")
             for line in summary:
                 padded_line = line.replace(Fore.GREEN, '').replace(Fore.YELLOW, '')
                 padding = max_length - len(padded_line)
-                print(Fore.YELLOW + f"│ {line}{' ' * padding} │{Fore.YELLOW}")
+                print(Fore.YELLOW + f"â”‚ {line}{' ' * padding} â”‚{Fore.YELLOW}")
             print(Fore.YELLOW + bottom_border)
 
         def save_results(vulnerable_urls, total_found, total_scanned, start_time):
@@ -2211,11 +2214,11 @@ try:
             }
 
         for url in urls:
-            box_content = f" → Scanning URL: {url} "
+            box_content = f" â†’ Scanning URL: {url} "
             box_width = max(len(box_content) + 2, 40)
-            print(Fore.YELLOW + "\n┌" + "─" * (box_width - 2) + "┐")
-            print(Fore.YELLOW + f"│{box_content.center(box_width - 2)}│")
-            print(Fore.YELLOW + "└" + "─" * (box_width - 2) + "┘\n")
+            print(Fore.YELLOW + "\nâ”Œ" + "â”€" * (box_width - 2) + "â”")
+            print(Fore.YELLOW + f"â”‚{box_content.center(box_width - 2)}â”‚")
+            print(Fore.YELLOW + "â””" + "â”€" * (box_width - 2) + "â”˜\n")
 
             found, urls_with_payloads = test_crlf(url, max_threads)
             total_found += found
@@ -2235,11 +2238,11 @@ try:
         def display_update_intro():
             panel = Panel(
                 r"""
-██    ██ ███████ ███████  ███████ ████████ ███████ 
-██    ██ ██   ██ ██    ██ ██   ██    ██    ██      
-██    ██ ███████ ██    ██ ███████    ██    █████   
-██    ██ ██      ██    ██ ██   ██    ██    ██      
-████████ ██      ███████  ██   ██    ██    ███████ 
+â–ˆâ–ˆ    â–ˆâ–ˆ â–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆ â–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆ  â–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆ â–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆ â–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆ 
+â–ˆâ–ˆ    â–ˆâ–ˆ â–ˆâ–ˆ   â–ˆâ–ˆ â–ˆâ–ˆ    â–ˆâ–ˆ â–ˆâ–ˆ   â–ˆâ–ˆ    â–ˆâ–ˆ    â–ˆâ–ˆ      
+â–ˆâ–ˆ    â–ˆâ–ˆ â–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆ â–ˆâ–ˆ    â–ˆâ–ˆ â–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆ    â–ˆâ–ˆ    â–ˆâ–ˆâ–ˆâ–ˆâ–ˆ   
+â–ˆâ–ˆ    â–ˆâ–ˆ â–ˆâ–ˆ      â–ˆâ–ˆ    â–ˆâ–ˆ â–ˆâ–ˆ   â–ˆâ–ˆ    â–ˆâ–ˆ    â–ˆâ–ˆ      
+â–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆ â–ˆâ–ˆ      â–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆ  â–ˆâ–ˆ   â–ˆâ–ˆ    â–ˆâ–ˆ    â–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆ 
         """,
                 title="LOXS UPDATER",
                 expand=False,
@@ -2299,7 +2302,7 @@ try:
                     with open(file_path, 'wb') as file:
                         file.write(response.content)
                         
-                console.print("[green][✓] Update downloaded successfully.[/green]")
+                console.print("[green][âœ“] Update downloaded successfully.[/green]")
                 return True
                 
             except requests.exceptions.RequestException as e:
@@ -2344,7 +2347,7 @@ try:
         latest_v = version.parse(normalize_version(latest_version))
 
         if latest_v > current_v:
-            console.print(f"[green][✓] New version available: {latest_version}[/green]")
+            console.print(f"[green][âœ“] New version available: {latest_version}[/green]")
             update_choice = console.input("[cyan][?] Do you want to update? (y/n): [/cyan]").lower().strip()
             
             if update_choice == 'y':
@@ -2352,7 +2355,7 @@ try:
                     download_url = release_data['assets'][0]['browser_download_url']
                     
                     if download_update(download_url, __file__):
-                        console.print("[green][✓] Update completed. Please restart loxs..!![/green]")
+                        console.print("[green][âœ“] Update completed. Please restart loxs..!![/green]")
                     else:
                         console.print("[red][!] Update failed.[/red]")
                 except (KeyError, IndexError) as e:
@@ -2360,7 +2363,7 @@ try:
             else:
                 console.print("[yellow][i] Update cancelled.[/yellow]")
         else:
-            console.print("[green][✓] You are already using the latest version.[/green]")
+            console.print("[green][âœ“] You are already using the latest version.[/green]")
             console.print(f"[cyan][i] Current version: {current_version}[/cyan]")
             console.print(f"[cyan][i] Latest version: {latest_version}[/cyan]")
 
